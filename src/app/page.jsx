@@ -3,6 +3,7 @@ import Header from "../components/Header.jsx";
 import Hero from "../components/Hero.jsx";
 import Link from "next/link";
 import Desktop from "@/components/Desktop.jsx";
+import CarousalComponent from "@/components/CarousalComponent.jsx";
 
 export default function HomePage() {
   return (
@@ -257,13 +258,7 @@ export default function HomePage() {
             </div>
           </div>
         </section> */}
-        <section className="py-24 bg-gray-50">
-          <div className="container mx-auto px-4">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">
-              The Issues Holding Back Your Financial Efficiency
-            </h2>
-          </div>
-        </section>
+        <CarousalComponent />
         {/* 
         <section className="py-24 bg-gray-50">
           <div className="container mx-auto px-4">
