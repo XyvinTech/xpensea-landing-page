@@ -18,11 +18,16 @@ export default function Header() {
   }, []);
 
   const scrollToSection = (sectionId) => {
+    console.log("sectionId", sectionId);
+
     if (!isHomePage) {
-      window.location.href = `/${sectionId}`;
+      window.location.href = `/#${sectionId}`;
       return;
     }
-    const element = document.getElementById(sectionId);
+
+    let element;
+    if (sectionId) element = document.getElementById(sectionId);
+
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
     }
@@ -61,12 +66,7 @@ export default function Header() {
             <Link href="/blog" className="navbar-link">
               Blog
             </Link>
-            <button
-              onClick={() => scrollToSection("testimonials")}
-              className="navbar-link"
-            >
-              Testimonials
-            </button>
+
             <button
               onClick={() => scrollToSection("contact")}
               className="navbar-link"

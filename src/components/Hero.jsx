@@ -25,7 +25,7 @@ export default function Hero() {
               href="/signup"
               className="rounded-full bg-blue-600 px-8 py-4 text-lg font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-all duration-300"
             >
-              Get 6 months free
+              Get 1 months free
             </Link>
             <Link
               href="#demo"
@@ -46,7 +46,7 @@ export default function Hero() {
             </Link>
           </div>
         </div>
-
+{/* 
         <div className="mt-20">
           <h2 className="text-center text-gray-500 text-sm font-semibold mb-8">
             Trusted by these six companies so far
@@ -59,7 +59,7 @@ export default function Hero() {
             <img src="/logos/laravel.svg" alt="Laravel" className="h-8" />
             <img src="/logos/statamic.svg" alt="Statamic" className="h-8" />
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

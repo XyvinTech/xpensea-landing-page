@@ -45,18 +45,6 @@ export default function SignupPage() {
       features: ["5 Users", "Basic Features", "Email Support", "Analytics"],
     },
     {
-      id: "pro",
-      name: "Pro",
-      price: { monthly: "$49.99", yearly: "$499.90" },
-      features: [
-        "25 Users",
-        "Advanced Features",
-        "Priority Support",
-        "API Access",
-      ],
-      popular: true,
-    },
-    {
       id: "enterprise",
       name: "Enterprise",
       price: { monthly: "$499.99", yearly: "$4,999.90" },
@@ -155,7 +143,7 @@ export default function SignupPage() {
         </Link>
       </div>
 
-      <div className="sm:mx-auto sm:w-full sm:max-w-2xl">
+      <div className="sm:mx-auto sm:w-full sm:max-w-2xl lg:max-w-4xl">
         {/* Progress Steps */}
         <div className="px-4 sm:px-0 mb-8">
           <div className="flex justify-between">
@@ -420,24 +408,11 @@ export default function SignupPage() {
                       >
                         Monthly
                       </button>
-                      <button
-                        type="button"
-                        onClick={() => setBillingCycle("yearly")}
-                        className={`px-4 py-2 rounded-md text-sm font-medium ${
-                          billingCycle === "yearly"
-                            ? "bg-white text-blue-600 shadow-sm"
-                            : "text-gray-500 hover:text-gray-900"
-                        }`}
-                      >
-                        Yearly
-                        <span className="ml-1 text-xs text-green-500">
-                          Save 20%
-                        </span>
-                      </button>
+                   
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {plans.map((plan) => (
                       <div
                         key={plan.id}

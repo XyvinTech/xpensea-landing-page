@@ -16,7 +16,7 @@ const blogPosts = [
     date: "March 15, 2024",
     readTime: "5 min read",
     category: "Business Finance",
-    image: "/blog/expense-management.jpg",
+    image: "/expense-management.webp",
   },
   {
     id: 2,
@@ -142,8 +142,10 @@ export default function BlogPage() {
                     key={post.id}
                     className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300"
                   >
-                    <div className="relative h-48">
-                      <div className="absolute inset-0 bg-gray-200 animate-pulse"></div>
+                    <div className="relative h-52">
+                      <div className="absolute inset-0 bg-gray-200 animate-pulse">
+                      {/* <Image src={post.image} alt={post.title} layout="fill" /> */}
+                      </div>
                     </div>
                     <div className="p-6">
                       <div className="flex items-center space-x-2 mb-4">
@@ -162,7 +164,9 @@ export default function BlogPage() {
                       </p>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-3">
-                          <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
+                          {/* <div className="w-10 h-10 bg-gray-200 rounded-full">
+                            <Image src="/avatar.jpg" alt="Avatar" width={40} height={40} />
+                          </div> */}
                           <div>
                             <p className="text-sm font-medium">{post.author}</p>
                             <p className="text-sm text-gray-500">{post.role}</p>
