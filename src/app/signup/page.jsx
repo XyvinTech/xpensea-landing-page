@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import Link from "next/link";
 import { useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
-import { Elements } from "@stripe/stripe-js/pure";
+import { Elements } from "@stripe/react-stripe-js";
 import {
   PaymentElement,
   useStripe,
@@ -408,7 +408,6 @@ export default function SignupPage() {
                       >
                         Monthly
                       </button>
-                   
                     </div>
                   </div>
 
