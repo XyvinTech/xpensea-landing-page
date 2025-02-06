@@ -12,7 +12,7 @@ const features = [
     title: "AI Score powered Approval Assistance",
     description:
       "Smart expense approvals powered by AI to reduce fraud and speed up processing.",
-    image: "/AI.png",
+    image: "/Ai.png",
   },
   {
     title: "Event Based Expense Reporting",
