@@ -35,19 +35,19 @@ export default function SignupPage() {
     {
       id: "free",
       name: "Free",
-      price: { monthly: "$0", yearly: "$0" },
-      features: ["3 Users", "Basic Features", "Email Support"],
+      price: { monthly: "₹0", yearly: "₹0" },
+      features: ["5 Users", "Basic Features", "Email Support"],
     },
     {
       id: "basic",
       name: "Basic",
-      price: { monthly: "$29.99", yearly: "$299.90" },
-      features: ["5 Users", "Basic Features", "Email Support", "Analytics"],
+      price: { monthly: "₹99", yearly: "$299.90" },
+      features: ["10 Users", "Basic Features", "Email Support", "Analytics"],
     },
     {
       id: "enterprise",
       name: "Enterprise",
-      price: { monthly: "$499.99", yearly: "$4,999.90" },
+      price: { monthly: "₹199", yearly: "$4,999.90" },
       features: [
         "Unlimited Users",
         "All Features",

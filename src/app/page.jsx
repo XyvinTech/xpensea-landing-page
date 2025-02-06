@@ -26,9 +26,9 @@ export default function HomePage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
               <div className="bg-white rounded-lg shadow-lg p-8">
-                <h3 className="text-xl font-semibold mb-4">Starter</h3>
+                <h3 className="text-xl font-semibold mb-4">Free</h3>
                 <div className="mb-6">
-                  <span className="text-4xl font-bold">$9</span>
+                  <span className="text-4xl font-bold">₹0</span>
                   <span className="text-gray-600">/month</span>
                 </div>
                 <ul className="space-y-4 mb-8">
@@ -62,7 +62,7 @@ export default function HomePage() {
                         d="M5 13l4 4L19 7"
                       ></path>
                     </svg>
-                    Basic reporting
+                    Basic Features
                   </li>
                   <li className="flex items-center">
                     <svg
@@ -78,7 +78,7 @@ export default function HomePage() {
                         d="M5 13l4 4L19 7"
                       ></path>
                     </svg>
-                    Mobile app access
+                    Email Support
                   </li>
                 </ul>
                 <button className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors duration-300">
@@ -90,9 +90,9 @@ export default function HomePage() {
                 <div className="absolute top-0 right-0 bg-blue-600 text-white px-3 py-1 text-sm rounded-bl-lg">
                   Popular
                 </div>
-                <h3 className="text-xl font-semibold mb-4">Professional</h3>
+                <h3 className="text-xl font-semibold mb-4">Basic</h3>
                 <div className="mb-6">
-                  <span className="text-4xl font-bold">$29</span>
+                  <span className="text-4xl font-bold">₹99</span>
                   <span className="text-gray-600">/month</span>
                 </div>
                 <ul className="space-y-4 mb-8">
@@ -110,7 +110,7 @@ export default function HomePage() {
                         d="M5 13l4 4L19 7"
                       ></path>
                     </svg>
-                    Up to 20 users
+                    Up to 10 users
                   </li>
                   <li className="flex items-center">
                     <svg
@@ -126,7 +126,7 @@ export default function HomePage() {
                         d="M5 13l4 4L19 7"
                       ></path>
                     </svg>
-                    Advanced reporting
+                    Basic Features
                   </li>
                   <li className="flex items-center">
                     <svg
@@ -142,7 +142,7 @@ export default function HomePage() {
                         d="M5 13l4 4L19 7"
                       ></path>
                     </svg>
-                    Priority support
+                    Email support
                   </li>
                 </ul>
                 <button className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors duration-300">
@@ -153,7 +153,8 @@ export default function HomePage() {
               <div className="bg-white rounded-lg shadow-lg p-8">
                 <h3 className="text-xl font-semibold mb-4">Enterprise</h3>
                 <div className="mb-6">
-                  <span className="text-4xl font-bold">Custom</span>
+                <span className="text-4xl font-bold">₹199</span>
+                <span className="text-gray-600">/month</span>
                 </div>
                 <ul className="space-y-4 mb-8">
                   <li className="flex items-center">
@@ -186,7 +187,7 @@ export default function HomePage() {
                         d="M5 13l4 4L19 7"
                       ></path>
                     </svg>
-                    Custom reporting
+                    All Features
                   </li>
                   <li className="flex items-center">
                     <svg
@@ -202,11 +203,11 @@ export default function HomePage() {
                         d="M5 13l4 4L19 7"
                       ></path>
                     </svg>
-                    Dedicated support
+                    24/7 support
                   </li>
                 </ul>
                 <button className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors duration-300">
-                  Contact sales
+                  Contact
                 </button>
               </div>
             </div>
