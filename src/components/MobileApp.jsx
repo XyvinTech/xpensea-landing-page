@@ -6,31 +6,31 @@ const features = [
     title: "Real Time Monitoring",
     description:
       "Watch expenses unfold live with instant alerts and spending insights.",
-    image: "/Real_Time.webp",
+    image: "/pic.png",
   },
   {
     title: "AI Score powered Approval Assistance",
     description:
       "Smart expense approvals powered by AI to reduce fraud and speed up processing.",
-    image: "/AI.webp",
+    image: "/AI.png",
   },
   {
     title: "Event Based Expense Reporting",
     description:
       "Organize and track expenses by events for clearer budget management.",
-    image: "/vat-handling.png",
+    image: "/Event.png",
   },
   {
     title: "Streamlined Expense Tracking",
     description:
       "Simplify expense management with automatic categorization and policy checks.",
-    image: "/reporting.png",
+    image: "/Expense.png",
   },
   {
     title: "Expense Capture at the Source",
     description:
       "Capture receipts instantly with our smart mobile scanning technology.",
-    image: "/reporting.png",
+    image: "/Source.png",
   },
 ];
 const MobileApp = () => {
@@ -64,7 +64,7 @@ const MobileApp = () => {
             ))}
           </div>
           <div className="lg:col-span-6 flex justify-center items-center">
-            <div className="  shadow-xl overflow-hidden w-full max-w-max ">
+            <div className="  shadow-xl overflow-hidden w-max rounded-md ">
               <img
                 src={selectedFeature.image}
                 alt={selectedFeature.title}
