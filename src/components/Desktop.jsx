@@ -6,7 +6,7 @@ const features = [
     title: "Transparent Admin Dashboard",
     description:
       "Monitor all expense activities with clear, real-time visibility.",
-    image: "/web1.webp",
+    image: "/web1.png",
     icon: (
       <svg
         className="w-6 h-6 text-blue-600"
@@ -27,7 +27,7 @@ const features = [
     title: "AI Assisted Policy Compliance",
     description:
       "Automated checks to ensure expenses follow company guidelines.",
-    image: "/web2.webp",
+    image: "/web2.png",
     icon: (
       <svg
         className="w-6 h-6 text-blue-600"
@@ -48,7 +48,7 @@ const features = [
     title: "Budgeting Through Advance Payment",
     description:
       "Plan and control expenses with pre-approved budget allocation.",
-    image: "/contacts.png",
+    image: "/web3.png",
     icon: (
       <svg
         className="w-6 h-6 text-blue-600"
@@ -99,11 +99,11 @@ const Desktop = () => {
         </div>
 
         <div className="mt-12 flex justify-center">
-          <div className=" overflow-hidden w-full max-w-5xl flex justify-center">
+          <div className="rounded-lg shadow-lg bg-white p-4 w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 flex items-center justify-center">
             <img
               src={selectedFeature.image}
               alt={selectedFeature.title}
-              className="w-full"
+              className="max-w-[85%] max-h-[85%] object-contain"
             />
           </div>
         </div>

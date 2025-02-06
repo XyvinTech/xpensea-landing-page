@@ -36,45 +36,46 @@ const features = [
 const MobileApp = () => {
   const [selectedFeature, setSelectedFeature] = useState(features[0]);
   return (
-    <section className="py-24 bg-gradient-to-b from-blue-50 to-white">
-      <div className="container mx-auto px-4">
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">
-          Smart expense management in real-time.
-        </h2>
-        <p className="text-lg text-gray-600 text-center mb-16">
-          From instant capture to AI-powered approvals, manage all your business
-          expenses effortlessly in one place.
-        </p>
+    <section className="py-20 bg-gradient-to-b from-blue-50 to-white">
+    <div className="container mx-auto px-6 md:px-12">
+      <h2 className="text-3xl md:text-4xl font-bold text-center mb-6">
+        Smart Expense Management in Real-Time
+      </h2>
+      <p className="text-lg text-gray-600 text-center mb-12">
+        From instant capture to AI-powered approvals, manage all your business
+        expenses effortlessly in one place.
+      </p>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          <div className="lg:col-span-6 space-y-8">
-            {features.map((feature, index) => (
-              <div
-                key={index}
-                className={`p-6 rounded-lg shadow-md cursor-pointer transition ${
-                  selectedFeature.title === feature.title
-                    ? "bg-blue-100"
-                    : "bg-white"
-                }`}
-                onClick={() => setSelectedFeature(feature)}
-              >
-                <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-                <p className="text-gray-600">{feature.description}</p>
-              </div>
-            ))}
-          </div>
-          <div className="lg:col-span-6 flex justify-center items-center">
-            <div className="  shadow-xl overflow-hidden w-max rounded-md ">
-              <img
-                src={selectedFeature.image}
-                alt={selectedFeature.title}
-                className="w-full"
-              />
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+ 
+        <div className="lg:col-span-6 space-y-4">
+          {features.map((feature, index) => (
+           <div
+           key={index}
+           className={`p-6 rounded-lg shadow-md cursor-pointer transition ${
+             selectedFeature.title === feature.title
+               ? "bg-blue-100"
+               : "bg-white"
+           }`}
+           onClick={() => setSelectedFeature(feature)}
+         >
+              <h3 className="text-lg font-semibold mb-1">{feature.title}</h3>
+              <p className="text-gray-600 text-sm">{feature.description}</p>
             </div>
+          ))}
+        </div>
+        <div className="lg:col-span-6 flex justify-center">
+          <div className="shadow-lg rounded-lg overflow-hidden w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 bg-white flex items-center justify-center">
+            <img
+              src={selectedFeature.image}
+              alt={selectedFeature.title}
+              className="max-w-[85%] max-h-[85%] object-contain"
+            />
           </div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
   );
 };
 
