@@ -1,32 +1,41 @@
 import { MongoClient } from "mongodb";
 
-const MONGODB_URI = process.env.MONGODB_URI;
-const MONGODB_DB = process.env.MONGODB_DB;
+const MONGODB_URI = process.env.MONGODB_URI || "";
+const MONGODB_DB = process.env.MONGODB_DB || "xpensea";
 
 if (!MONGODB_URI) {
-  throw new Error("Please define the MONGODB_URI environment variable");
-}
-
-if (!MONGODB_DB) {
-  throw new Error("Please define the MONGODB_DB environment variable");
+  console.warn(
+    "Please define the MONGODB_URI environment variable inside .env.local or in your deployment platform"
+  );
 }
 
 let cachedClient = null;
 let cachedDb = null;
 
 export async function connectToDatabase() {
-  if (cachedDb) {
-    return cachedDb;
-  }
+  try {
+    if (cachedDb) {
+      return cachedDb;
+    }
 
-  if (!cachedClient) {
-    cachedClient = await MongoClient.connect(MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-  }
+    if (!MONGODB_URI) {
+      throw new Error(
+        "Please define the MONGODB_URI environment variable inside .env.local or in your deployment platform"
+      );
+    }
 
-  const db = cachedClient.db(MONGODB_DB);
-  cachedDb = db;
-  return db;
+    if (!cachedClient) {
+      cachedClient = await MongoClient.connect(MONGODB_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      });
+    }
+
+    const db = cachedClient.db(MONGODB_DB);
+    cachedDb = db;
+    return db;
+  } catch (error) {
+    console.error("Failed to connect to MongoDB:", error);
+    throw error;
+  }
 } 
