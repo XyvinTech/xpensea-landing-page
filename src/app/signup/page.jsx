@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import {
@@ -10,6 +10,7 @@ import {
   useStripe,
   useElements,
 } from "@stripe/react-stripe-js";
+import { getPlan, registerComapny } from "../api/adminApi";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
@@ -22,6 +23,7 @@ export default function SignupPage() {
   const [selectedPlan, setSelectedPlan] = useState("free");
   const [billingCycle, setBillingCycle] = useState("monthly");
   const [clientSecret, setClientSecret] = useState("");
+  const [plans, setPlans] = useState([]);
 
   const {
     register,
@@ -31,55 +33,42 @@ export default function SignupPage() {
     trigger,
   } = useForm();
 
-  const plans = [
-    {
-      id: "free",
-      name: "Free",
-      price: { monthly: "₹0", yearly: "₹0" },
-      features: ["5 Users", "Basic Features", "Email Support"],
-    },
-    {
-      id: "basic",
-      name: "Basic",
-      price: { monthly: "₹99", yearly: "$299.90" },
-      features: ["10 Users", "Basic Features", "Email Support", "Analytics"],
-    },
-    {
-      id: "enterprise",
-      name: "Enterprise",
-      price: { monthly: "₹199", yearly: "$4,999.90" },
-      features: [
-        "Unlimited Users",
-        "All Features",
-        "24/7 Support",
-        "Custom Integration",
-        "Dedicated Account Manager",
-      ],
-    },
-  ];
+  useEffect(() => {
+    const fetchData = async () => {
+      const plan = await getPlan();
+      console.log(plan.data);
+      setPlans(plan.data);
+    };
 
+    fetchData();
+  }, []);
+
+  console.log(plans);
   const nextStep = async () => {
     const fields = getFieldsForStep(currentStep);
     const isValid = await trigger(fields);
     if (isValid) {
-      if (currentStep === 2 && selectedPlan !== "free") {
-        // Create payment intent before moving to payment step
-        try {
-          const response = await fetch("/api/create-payment-intent", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              plan: selectedPlan,
-              billingCycle,
-            }),
-          });
-          const data = await response.json();
-          setClientSecret(data.clientSecret);
-        } catch (error) {
-          console.error("Error creating payment intent:", error);
-          return;
-        }
-      }
+      // if () {
+      //   // Create payment intent before moving to payment step
+      //   try {
+      //     const response = await fetch(
+      //       "http://localhost:3020/api/v1/user/register-company",
+      //       {
+      //         method: "POST",
+      //         headers: { "Content-Type": "application/json" },
+      //         body: JSON.stringify({
+      //           plan: selectedPlan,
+      //           billingCycle,
+      //         }),
+      //       }
+      //     );
+      //     const data = await response.json();
+      //     setClientSecret(data.clientSecret);
+      //   } catch (error) {
+      //     console.error("Error creating payment intent:", error);
+      //     return;
+      //   }
+      // }
       setCurrentStep((prev) => prev + 1);
     }
   };
@@ -91,7 +80,7 @@ export default function SignupPage() {
   const getFieldsForStep = (step) => {
     switch (step) {
       case 0:
-        return ["company_name", "industry", "company_size"];
+        return ["name", "industry", "company_size"];
       case 1:
         return ["admin_name", "email", "phone", "password"];
       case 2:
@@ -106,25 +95,20 @@ export default function SignupPage() {
   };
 
   const onSubmit = async (data) => {
+    console.log("dfdsfdf", data);
     try {
       const formData = {
-        ...data,
-        subscription_plan: selectedPlan,
-        billing_cycle: billingCycle,
-        subscription_status: "active",
-        role: "super_admin",
-        gdpr_consent: true,
+        name: data.name,
+        ownerEmail: data.email,
+        address: data.address,
+        industry: data.industry,
+        plan: selectedPlan,
+        admin_name: data.admin_name,
+        company_size: data.company_size,
       };
 
-      const response = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) {
-        throw new Error("Signup failed");
-      }
+      const response = await registerComapny(formData);
+      console.log(response);
 
       // Handle successful signup (redirect to dashboard, etc.)
     } catch (error) {
@@ -191,22 +175,22 @@ export default function SignupPage() {
                   <div className="space-y-4">
                     <div>
                       <label
-                        htmlFor="company_name"
+                        htmlFor="name"
                         className="block text-sm font-medium text-gray-700"
                       >
                         Company Name
                       </label>
                       <input
-                        {...register("company_name", {
+                        {...register("name", {
                           required: "Company name is required",
                         })}
                         type="text"
                         className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="Enter company name"
                       />
-                      {errors.company_name && (
+                      {errors.name && (
                         <p className="mt-1 text-sm text-red-600">
-                          {errors.company_name.message}
+                          {errors.name.message}
                         </p>
                       )}
                     </div>
@@ -356,31 +340,19 @@ export default function SignupPage() {
                         placeholder="+1 (555) 000-0000"
                       />
                     </div>
-
                     <div>
                       <label
-                        htmlFor="password"
+                        htmlFor="Address"
                         className="block text-sm font-medium text-gray-700"
                       >
-                        Password
+                        Address
                       </label>
                       <input
-                        {...register("password", {
-                          required: "Password is required",
-                          minLength: {
-                            value: 8,
-                            message: "Password must be at least 8 characters",
-                          },
-                        })}
-                        type="password"
+                        {...register("address")}
+                        type="address"
                         className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="Create a secure password"
+                        placeholder="address"
                       />
-                      {errors.password && (
-                        <p className="mt-1 text-sm text-red-600">
-                          {errors.password.message}
-                        </p>
-                      )}
                     </div>
                   </div>
                 </div>
@@ -414,10 +386,10 @@ export default function SignupPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {plans.map((plan) => (
                       <div
-                        key={plan.id}
-                        onClick={() => setSelectedPlan(plan.id)}
+                        key={plan._id}
+                        onClick={() => setSelectedPlan(plan._id)}
                         className={`relative rounded-xl border-2 p-6 cursor-pointer transition-all duration-200 ${
-                          selectedPlan === plan.id
+                          selectedPlan === plan._id
                             ? "border-blue-600 bg-blue-50"
                             : "border-gray-200 hover:border-blue-600 hover:shadow-md"
                         }`}
@@ -433,11 +405,9 @@ export default function SignupPage() {
                           </h3>
                           <div className="mt-2">
                             <span className="text-2xl font-bold text-gray-900">
-                              {plan.price[billingCycle]}
+                              {plan.price}
                             </span>
-                            <span className="text-gray-500">
-                              /{billingCycle === "monthly" ? "mo" : "yr"}
-                            </span>
+                            <span className="text-gray-500">/month</span>
                           </div>
                           <ul className="mt-6 space-y-4 flex-grow">
                             {plan.features.map((feature) => (
@@ -465,12 +435,12 @@ export default function SignupPage() {
                           <button
                             type="button"
                             className={`mt-8 w-full py-3 px-4 rounded-lg text-sm font-medium transition-colors ${
-                              selectedPlan === plan.id
+                              selectedPlan === plan._id
                                 ? "bg-blue-600 text-white hover:bg-blue-700"
                                 : "bg-white text-blue-600 border border-blue-600 hover:bg-blue-50"
                             }`}
                           >
-                            {selectedPlan === plan.id
+                            {selectedPlan === plan._id
                               ? "Selected"
                               : "Select Plan"}
                           </button>
@@ -503,42 +473,6 @@ export default function SignupPage() {
                       <PaymentForm />
                     </Elements>
                   )}
-
-                  <div className="mt-6">
-                    <div className="flex items-center">
-                      <input
-                        {...register("gdpr_consent", {
-                          required: "You must accept the terms and conditions",
-                        })}
-                        type="checkbox"
-                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                      />
-                      <label
-                        htmlFor="gdpr_consent"
-                        className="ml-2 block text-sm text-gray-900"
-                      >
-                        I agree to the{" "}
-                        <Link
-                          href="/terms"
-                          className="text-blue-600 hover:text-blue-500"
-                        >
-                          Terms of Service
-                        </Link>{" "}
-                        and{" "}
-                        <Link
-                          href="/privacy"
-                          className="text-blue-600 hover:text-blue-500"
-                        >
-                          Privacy Policy
-                        </Link>
-                      </label>
-                    </div>
-                    {errors.gdpr_consent && (
-                      <p className="mt-1 text-sm text-red-600">
-                        {errors.gdpr_consent.message}
-                      </p>
-                    )}
-                  </div>
                 </div>
               </div>
             )}
