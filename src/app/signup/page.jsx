@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
@@ -10,7 +10,7 @@ import {
   useStripe,
   useElements,
 } from "@stripe/react-stripe-js";
-import { getPlan, registerComapny } from "../api/adminApi";
+import { getPlan, registerComapny, verifyEmail, verifyOtp } from "../api/adminApi";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
@@ -24,6 +24,8 @@ export default function SignupPage() {
   const [billingCycle, setBillingCycle] = useState("monthly");
   const [clientSecret, setClientSecret] = useState("");
   const [plans, setPlans] = useState([]);
+  const [isOtpSent, setIsOtpSent] = useState(false);
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
 
   const {
     register,
@@ -95,7 +97,7 @@ export default function SignupPage() {
   };
 
   const onSubmit = async (data) => {
-    console.log("dfdsfdf", data);
+    console.log("sumbiteddd", data);
     try {
       const formData = {
         name: data.name,
@@ -108,11 +110,69 @@ export default function SignupPage() {
       };
 
       const response = await registerComapny(formData);
-      console.log(response);
+      window.location.href = response.data;
 
-      // Handle successful signup (redirect to dashboard, etc.)
     } catch (error) {
       console.error("Signup error:", error);
+    }
+  };
+
+  const handleVerifyEmail = async () => {
+    const email = watch("email");
+    const admin_name = watch("admin_name");
+    
+    if (!email || !admin_name) {
+      alert("Please enter your name and email first");
+      return;
+    }
+
+    try {
+      const response = await verifyEmail({ 
+        email,
+        name: admin_name 
+      });
+      
+      if (response) {
+        console.log(response);
+        
+     
+      //  console.log("OTP sent successfully. Please check your email.");
+        setIsOtpSent(true);
+      } else {
+        alert( "Failed to send OTP");
+      }
+    } catch (error) {
+      console.error("Error verifying email:", error);
+      alert(error.message || "Failed to send OTP. Please try again.");
+    }
+  };
+console.log("isOtpSent", isOtpSent ,isEmailVerified);
+
+  const handleVerifyOtp = async () => {
+    const otp = watch("otp");
+    const email = watch("email");
+    
+    if (!otp || !email) {
+      alert("Please enter the OTP");
+      return;
+    }
+
+    try {
+      const response = await verifyOtp({
+        email,
+        otp: otp.toString()
+      });
+
+      if (response.success) {
+        setIsOtpSent(false);
+        setIsEmailVerified(true);
+        alert("Email verified successfully!");
+      } else {
+        alert(response.message || "Invalid OTP");
+      }
+    } catch (error) {
+      console.error("Error verifying OTP:", error);
+      alert(error.message || "Failed to verify OTP. Please try again.");
     }
   };
 
@@ -307,24 +367,79 @@ export default function SignupPage() {
                       >
                         Work Email
                       </label>
-                      <input
-                        {...register("email", {
-                          required: "Email is required",
-                          pattern: {
-                            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                            message: "Invalid email address",
-                          },
-                        })}
-                        type="email"
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="you@company.com"
-                      />
+                      <div className="mt-1 flex gap-2">
+                        <input
+                          {...register("email", {
+                            required: "Email is required",
+                            pattern: {
+                              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                              message: "Invalid email address",
+                            },
+                          })}
+                          type="email"
+                          disabled={isEmailVerified}
+                          className="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          placeholder="you@company.com"
+                        />
+                        {!isOtpSent && !isEmailVerified && (
+                          <button
+                            type="button"
+                            onClick={handleVerifyEmail}
+                            className="px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                          >
+                            Verify Email
+                          </button>
+                        )}
+                      </div>
                       {errors.email && (
                         <p className="mt-1 text-sm text-red-600">
                           {errors.email.message}
                         </p>
                       )}
                     </div>
+
+                    {isOtpSent && !isEmailVerified && (
+                      <div className="mt-4">
+                        <label htmlFor="otp" className="block text-sm font-medium text-gray-700">
+                          Enter OTP
+                        </label>
+                        <div className="mt-1 flex gap-2">
+                          <input
+                            {...register("otp", {
+                              required: "OTP is required",
+                            })}
+                            type="text"
+                            className="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="Enter OTP sent to your email"
+                          />
+                          <button
+                            type="button"
+                            onClick={handleVerifyOtp}
+                            className="px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                          >
+                            Verify OTP
+                          </button>
+                        </div>
+                       
+                      </div>
+                    )}
+
+                    {isEmailVerified && (
+                      <div className="mt-4 rounded-md bg-green-50 p-4">
+                        <div className="flex">
+                          <div className="flex-shrink-0">
+                            <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            </svg>
+                          </div>
+                          <div className="ml-3">
+                            <p className="text-sm font-medium text-green-800">
+                              Email verified successfully
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
 
                     <div>
                       <label

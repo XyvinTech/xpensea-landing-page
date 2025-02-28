@@ -1,12 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AdminNavbar from "../../../components/AdminNavbar";
 import Link from "next/link";
+import { getComponies } from "@/app/api/adminApi";
+import { set } from "react-hook-form";
 
 export default function UsersManagement() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
+  const [companies, setCompanies] = useState([]);
+
+  useEffect(() => {
+    const fetchCompanies = async () => {
+      try {
+        const companies = await getComponies();
+        setCompanies(companies.data);
+      } catch (error) {
+        console.log({ error: error.message });
+      }
+    };
+    fetchCompanies();
+  }, []);
 
   const users = [
     {
@@ -56,7 +71,7 @@ export default function UsersManagement() {
     },
   ];
 
-  const filteredUsers = users.filter((user) => {
+  const filteredUsers = companies.filter((user) => {
     const matchesSearch =
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase());
@@ -86,12 +101,12 @@ export default function UsersManagement() {
           <div className="md:flex md:items-center md:justify-between mb-8">
             <div className="flex-1 min-w-0">
               <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-                Users Management
+                Company Management
               </h2>
             </div>
             <div className="mt-4 flex md:mt-0 md:ml-4">
               <button className="ml-3 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                Add New User
+                Add New admin
               </button>
             </div>
           </div>
@@ -141,7 +156,10 @@ export default function UsersManagement() {
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      User
+                      Admin
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Company
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Plan
@@ -161,8 +179,8 @@ export default function UsersManagement() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredUsers.map((user) => (
-                    <tr key={user.id} className="hover:bg-gray-50">
+                  {companies.map((user) => (
+                    <tr key={user._id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="h-10 w-10 flex-shrink-0">
@@ -170,10 +188,10 @@ export default function UsersManagement() {
                           </div>
                           <div className="ml-4">
                             <Link
-                              href={`/admin/users/${user.id}`}
+                              href={`/admin/companies/${user.id}`}
                               className="text-sm font-medium text-gray-900 hover:text-blue-600"
                             >
-                              {user.name}
+                              {user?.admin_name}
                             </Link>
                             <div className="text-sm text-gray-500">
                               {user.email}
@@ -182,7 +200,10 @@ export default function UsersManagement() {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{user.plan}</div>
+                        <div className="text-sm text-gray-900">{user.name}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">{user.plan?.name}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span

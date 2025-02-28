@@ -1,10 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AdminNavbar from "../../../components/AdminNavbar";
+import { getPayments, getPlan, getPlanById } from "@/app/api/adminApi";
 
 export default function SubscriptionsManagement() {
   const [timeRange, setTimeRange] = useState("month");
+  const [plans, setPlans] = useState([]);
+  const [editOpen, setEditOpen] = useState(false);
+  const [payments, setPayments] = useState([]);
+
+  useEffect(() => {
+    const fetchPayments = async () => {
+      try {
+        const payments = await getPayments();
+        setPayments(payments.data);
+      } catch (error) {
+        console.log({ error: error.message });
+      }
+    };
+    fetchPayments();
+  }, []);
 
   const metrics = [
     {
@@ -67,41 +83,27 @@ export default function SubscriptionsManagement() {
       date: "Mar 13, 2024",
     },
   ];
+  useEffect(() => {
+    const fetchData = async () => {
+      const plans = await getPlan();
+      console.log(plans.data);
+      setPlans(plans.data);
+    };
 
-  const plans = [
-    {
-      name: "Basic",
-      price: "$29.99",
-      period: "month",
-      features: ["5 Users", "Basic Features", "Email Support"],
-      subscribers: 450,
-    },
-    {
-      name: "Pro",
-      price: "$49.99",
-      period: "month",
-      features: [
-        "25 Users",
-        "Advanced Features",
-        "Priority Support",
-        "API Access",
-      ],
-      subscribers: 890,
-      popular: true,
-    },
-    {
-      name: "Enterprise",
-      price: "$499.99",
-      period: "month",
-      features: [
-        "Unlimited Users",
-        "All Features",
-        "24/7 Support",
-        "Custom Integration",
-      ],
-      subscribers: 203,
-    },
-  ];
+    fetchData();
+  }, []);
+
+  const handleEdit = async (feature) => {
+    try {
+      const response = await getPlanById(feature);
+      console.log("edited data", response.data);
+    } catch (error) {
+      console.log(error);
+    }
+
+    setEditOpen(true);
+    console.log("this is feature:", feature);
+  };
 
   return (
     <>
@@ -242,7 +244,10 @@ export default function SubscriptionsManagement() {
                       </li>
                     ))}
                   </ul>
-                  <button className="mt-8 w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                  <button
+                    onClick={() => handleEdit(plan._id)}
+                    className="mt-8 w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  >
                     Edit Plan
                   </button>
                 </div>
@@ -263,9 +268,9 @@ export default function SubscriptionsManagement() {
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         User
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Plan
-                      </th>
+                      </th> */}
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Amount
                       </th>
@@ -278,30 +283,29 @@ export default function SubscriptionsManagement() {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {transactions.map((transaction) => (
-                      <tr key={transaction.id} className="hover:bg-gray-50">
+                    {payments.map((payment) => (
+                      <tr key={payment._id} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                          {transaction.user}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {transaction.plan}
+                          {payment.company?.name}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {transaction.amount}
+                          ₹{payment.amount} {payment.currency}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span
                             className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${
-                              transaction.status === "successful"
+                              payment.status === "completed"
                                 ? "bg-green-100 text-green-800"
-                                : "bg-red-100 text-red-800"
+                                : "bg-yellow-100 text-yellow-800"
                             }`}
                           >
-                            {transaction.status}
+                            {payment.status}
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {transaction.date}
+                          {new Date(payment.createdAt).toLocaleDateString(
+                            "en-IN"
+                          )}
                         </td>
                       </tr>
                     ))}

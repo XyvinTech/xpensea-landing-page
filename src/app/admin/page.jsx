@@ -1,19 +1,45 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import AdminNavbar from "../../components/AdminNavbar";
+import { getDashboard } from "../api/adminApi";
 
 export default function AdminDashboard() {
-  const stats = [
-    { name: "Total Users", value: "2,543", change: "+12.5%", trend: "up" },
-    {
-      name: "Active Subscriptions",
-      value: "1,280",
-      change: "+18.2%",
-      trend: "up",
-    },
-    { name: "Revenue", value: "$45,678", change: "+8.3%", trend: "up" },
-    { name: "Open Tickets", value: "23", change: "-4.1%", trend: "down" },
-  ];
+
+  const [stats, setStats] = useState([]);
+  
+
+  useEffect(() => {
+    getDashboard()
+      .then((data) => {
+        if (data.status === 200) {
+          const statsData = [
+            {
+              name: "Total Companies",
+              value: data.data.companies.total,
+              trend: "up",
+              change: "+0", // Change can be dynamically set if available
+            },
+            {
+              name: "Active Companies",
+              value: data.data.companies.active,
+              trend: "up",
+              change: "+0",
+            },
+            {
+              name: "Revenue",
+              value: `$${data.data.revenue}`,
+              trend: data.data.revenue >= 0 ? "up" : "down",
+              change: `+${data.data.revenue}`,
+            },
+          ];
+          setStats(statsData);
+        }
+      })
+      .catch((error) => console.error("Error fetching dashboard stats:", error));
+  }, []);
+
+
 
   const recentActivity = [
     {
@@ -79,75 +105,73 @@ export default function AdminDashboard() {
 
           {/* Stats Grid */}
           <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {stats.map((item) => (
-              <div
-                key={item.name}
-                className="bg-white overflow-hidden shadow rounded-lg"
-              >
-                <div className="p-5">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <div
-                        className={`h-12 w-12 rounded-md flex items-center justify-center ${
-                          item.trend === "up" ? "bg-green-100" : "bg-red-100"
-                        }`}
-                      >
-                        {item.trend === "up" ? (
-                          <svg
-                            className="h-6 w-6 text-green-600"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-                            />
-                          </svg>
-                        ) : (
-                          <svg
-                            className="h-6 w-6 text-red-600"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6"
-                            />
-                          </svg>
-                        )}
-                      </div>
-                    </div>
-                    <div className="ml-5 w-0 flex-1">
-                      <dl>
-                        <dt className="text-sm font-medium text-gray-500 truncate">
-                          {item.name}
-                        </dt>
-                        <dd className="flex items-baseline">
-                          <div className="text-2xl font-semibold text-gray-900">
-                            {item.value}
-                          </div>
-                          <div
-                            className={`ml-2 flex items-baseline text-sm font-semibold ${
-                              item.trend === "up"
-                                ? "text-green-600"
-                                : "text-red-600"
-                            }`}
-                          >
-                            {item.change}
-                          </div>
-                        </dd>
-                      </dl>
-                    </div>
-                  </div>
+          {stats.map((item) => (
+        <div
+          key={item.name}
+          className="bg-white overflow-hidden shadow rounded-lg"
+        >
+          <div className="p-5">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <div
+                  className={`h-12 w-12 rounded-md flex items-center justify-center ${
+                    item.trend === "up" ? "bg-green-100" : "bg-red-100"
+                  }`}
+                >
+                  {item.trend === "up" ? (
+                    <svg
+                      className="h-6 w-6 text-green-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                      />
+                    </svg>
+                  ) : (
+                    <svg
+                      className="h-6 w-6 text-red-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6"
+                      />
+                    </svg>
+                  )}
                 </div>
               </div>
-            ))}
+              <div className="ml-5 w-0 flex-1">
+                <dl>
+                  <dt className="text-sm font-medium text-gray-500 truncate">
+                    {item.name}
+                  </dt>
+                  <dd className="flex items-baseline">
+                    <div className="text-2xl font-semibold text-gray-900">
+                      {item.value}
+                    </div>
+                    <div
+                      className={`ml-2 flex items-baseline text-sm font-semibold ${
+                        item.trend === "up" ? "text-green-600" : "text-red-600"
+                      }`}
+                    >
+                      {item.change}
+                    </div>
+                  </dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
           </div>
 
           <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
