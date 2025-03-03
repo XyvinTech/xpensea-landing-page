@@ -59,50 +59,9 @@ export default function SubscriptionsManagement() {
   }, []);
 
 
-
-
-
- 
-
-
-  const transactions = [
-    {
-      id: 1,
-      user: "John Smith",
-      amount: "$49.99",
-      plan: "Pro (Monthly)",
-      status: "successful",
-      date: "Mar 15, 2024",
-    },
-    {
-      id: 2,
-      user: "Sarah Johnson",
-      amount: "$499.99",
-      plan: "Enterprise (Annual)",
-      status: "successful",
-      date: "Mar 14, 2024",
-    },
-    {
-      id: 3,
-      user: "Michael Chen",
-      amount: "$29.99",
-      plan: "Basic (Monthly)",
-      status: "failed",
-      date: "Mar 14, 2024",
-    },
-    {
-      id: 4,
-      user: "Emily Davis",
-      amount: "$49.99",
-      plan: "Pro (Monthly)",
-      status: "successful",
-      date: "Mar 13, 2024",
-    },
-  ];
   useEffect(() => {
     const fetchData = async () => {
       const plans = await getPlan();
-      console.log(plans.data);
       setPlans(plans.data);
     };
 
@@ -112,13 +71,11 @@ export default function SubscriptionsManagement() {
   const handleEdit = async (feature) => {
     try {
       const response = await getPlanById(feature);
-      console.log("edited data", response.data);
     } catch (error) {
       console.log(error);
     }
 
     setEditOpen(true);
-    console.log("this is feature:", feature);
   };
 
   return (

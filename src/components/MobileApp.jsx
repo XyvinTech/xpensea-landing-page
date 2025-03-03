@@ -65,7 +65,7 @@ const MobileApp = () => {
           ))}
         </div>
         <div className="lg:col-span-6 flex justify-center">
-          <div className="shadow-lg rounded-lg overflow-hidden w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 bg-white flex items-center justify-center">
+          <div className="shadow-lg rounded-lg overflow-hidden w-64 h-64 sm:w-72 sm:h-72 md:w-100 md:h-100 bg-white flex items-center justify-center">
             <img
               src={selectedFeature.image}
               alt={selectedFeature.title}

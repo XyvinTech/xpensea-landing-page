@@ -1,10 +1,9 @@
 import axios from "axios";
 import axiosInstance from "./axiosIntercepter";
-
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 export const getPlan = async () => {
   try {
-    const plan = await axios.get(`http://localhost:3020/api/v1/admin/plan`);
-
+    const plan = await axios.get(`${BASE_URL}/admin/plan`);
     return plan.data;
   } catch (error) {
     console.log({ error: error.message });
@@ -14,7 +13,7 @@ export const getPlan = async () => {
 export const registerComapny = async (data) => {
   try {
     const response = await axios.post(
-      `http://localhost:3020/api/v1/superadmin/register-company`,
+      `${BASE_URL}/superadmin/register-company`,
       data
     );
 
@@ -27,7 +26,7 @@ export const registerComapny = async (data) => {
 export const getCompany = async () => {
   try {
     const response = await axios.post(
-      `http://localhost:3020/api/v1/superadmin/companies`,
+      `${BASE_URL}/superadmin/companies`,
       data
     );
 
@@ -40,7 +39,7 @@ export const getCompany = async () => {
 export const verifyEmail = async (data) => {
   try {
     const response = await axios.post(
-      `http://localhost:3020/api/v1/superadmin/verify-email`,
+      `${BASE_URL}/superadmin/verify-email`,
       data
     );
     return response.data;
@@ -55,7 +54,7 @@ export const verifyEmail = async (data) => {
 export const verifyOtp = async (data) => {
   try {
     const response = await axios.post(
-      `http://localhost:3020/api/v1/superadmin/verify-otp`,
+      `${BASE_URL}/superadmin/verify-otp`,
       data
     );
     return response.data;
@@ -70,7 +69,7 @@ export const verifyOtp = async (data) => {
 export const getComponies = async (data) => {
   try {
     const response = await axiosInstance.get(
-      `http://localhost:3020/api/v1/superadmin/companies`,
+      `${BASE_URL}/superadmin/companies`,
       data
     );
     return response.data;
@@ -86,7 +85,7 @@ export const getComponies = async (data) => {
 export const getDashboard = async (data) => {
   try {
     const response = await axiosInstance.get(
-      `http://localhost:3020/api/v1/superadmin/dashboard/stats`,
+      `${BASE_URL}/superadmin/dashboard/stats`,
       data
     );
     return response.data;
@@ -101,7 +100,7 @@ export const getDashboard = async (data) => {
 export const getPlanById = async (data) => {
   try {
     const response = await axiosInstance.get(
-      `http://localhost:3020/api/v1/superadmin/plan/${data}`,
+      `${BASE_URL}/superadmin/plan/${data}`,
       data
     );
     return response.data;
@@ -117,7 +116,7 @@ export const getPlanById = async (data) => {
 export const getPayments = async (data) => {
   try {
     const response = await axiosInstance.get(
-      `http://localhost:3020/api/v1/superadmin/payments`,
+      `${BASE_URL}/superadmin/payments`,
       data
     );
     return response.data;

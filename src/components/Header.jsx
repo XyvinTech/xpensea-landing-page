@@ -76,9 +76,7 @@ export default function Header() {
           </nav>
 
           <div className="flex items-center space-x-4">
-            <Link href="/login" className="navbar-link">
-              Sign in
-            </Link>
+           
             <Link href="/signup" className="btn-primary">
               Get started
             </Link>

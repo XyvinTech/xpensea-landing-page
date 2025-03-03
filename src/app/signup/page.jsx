@@ -10,20 +10,28 @@ import {
   useStripe,
   useElements,
 } from "@stripe/react-stripe-js";
-import { getPlan, registerComapny, verifyEmail, verifyOtp } from "../api/adminApi";
+import {
+  getPlan,
+  registerComapny,
+  verifyEmail,
+  verifyOtp,
+} from "../api/adminApi";
+import { toast } from "react-toastify";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 );
 
-const steps = ["Company", "Account", "Plan", "Payment"];
+const steps = ["Company", "Account", "Plan"];
 
 export default function SignupPage() {
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedPlan, setSelectedPlan] = useState("free");
   const [billingCycle, setBillingCycle] = useState("monthly");
-  const [clientSecret, setClientSecret] = useState("");
+  const [saving, setSaving] = useState(false);
   const [plans, setPlans] = useState([]);
+  const [verifying, setVerifying] = useState(false);
+  const [otpverify, setOtpverify] = useState(false);
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [isEmailVerified, setIsEmailVerified] = useState(false);
 
@@ -38,39 +46,16 @@ export default function SignupPage() {
   useEffect(() => {
     const fetchData = async () => {
       const plan = await getPlan();
-      console.log(plan.data);
       setPlans(plan.data);
     };
 
     fetchData();
   }, []);
 
-  console.log(plans);
   const nextStep = async () => {
     const fields = getFieldsForStep(currentStep);
     const isValid = await trigger(fields);
     if (isValid) {
-      // if () {
-      //   // Create payment intent before moving to payment step
-      //   try {
-      //     const response = await fetch(
-      //       "http://localhost:3020/api/v1/user/register-company",
-      //       {
-      //         method: "POST",
-      //         headers: { "Content-Type": "application/json" },
-      //         body: JSON.stringify({
-      //           plan: selectedPlan,
-      //           billingCycle,
-      //         }),
-      //       }
-      //     );
-      //     const data = await response.json();
-      //     setClientSecret(data.clientSecret);
-      //   } catch (error) {
-      //     console.error("Error creating payment intent:", error);
-      //     return;
-      //   }
-      // }
       setCurrentStep((prev) => prev + 1);
     }
   };
@@ -97,7 +82,7 @@ export default function SignupPage() {
   };
 
   const onSubmit = async (data) => {
-    console.log("sumbiteddd", data);
+    setSaving(true);
     try {
       const formData = {
         name: data.name,
@@ -108,71 +93,65 @@ export default function SignupPage() {
         admin_name: data.admin_name,
         company_size: data.company_size,
       };
-
-      const response = await registerComapny(formData);
-      window.location.href = response.data;
-
+      if (currentStep === 2 && selectedPlan !== "free" && formData.name) {
+        const response = await registerComapny(formData);
+        window.location.href = response.data;
+      }
     } catch (error) {
       console.error("Signup error:", error);
+    } finally {
+      setSaving(false);
     }
   };
 
   const handleVerifyEmail = async () => {
+    setVerifying(true);
     const email = watch("email");
     const admin_name = watch("admin_name");
-    
+
     if (!email || !admin_name) {
-      alert("Please enter your name and email first");
       return;
     }
 
     try {
-      const response = await verifyEmail({ 
+      const response = await verifyEmail({
         email,
-        name: admin_name 
+        name: admin_name,
       });
-      
+
       if (response) {
-        console.log(response);
-        
-     
-      //  console.log("OTP sent successfully. Please check your email.");
         setIsOtpSent(true);
-      } else {
-        alert( "Failed to send OTP");
       }
     } catch (error) {
-      console.error("Error verifying email:", error);
-      alert(error.message || "Failed to send OTP. Please try again.");
+      toast.error(error.message);
+    } finally {
+      setVerifying(false);
     }
   };
-console.log("isOtpSent", isOtpSent ,isEmailVerified);
 
   const handleVerifyOtp = async () => {
+    setOtpverify(true);
     const otp = watch("otp");
     const email = watch("email");
-    
+
     if (!otp || !email) {
-      alert("Please enter the OTP");
       return;
     }
 
     try {
       const response = await verifyOtp({
         email,
-        otp: otp.toString()
+        otp: otp.toString(),
       });
 
-      if (response.success) {
+      if (response.data.success === true) {
         setIsOtpSent(false);
         setIsEmailVerified(true);
-        alert("Email verified successfully!");
-      } else {
-        alert(response.message || "Invalid OTP");
       }
     } catch (error) {
-      console.error("Error verifying OTP:", error);
-      alert(error.message || "Failed to verify OTP. Please try again.");
+      toast.error(error.message);
+    } finally {
+      setOtpverify(false);
     }
   };
 
@@ -378,29 +357,34 @@ console.log("isOtpSent", isOtpSent ,isEmailVerified);
                           })}
                           type="email"
                           disabled={isEmailVerified}
-                          className="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                           placeholder="you@company.com"
                         />
-                        {!isOtpSent && !isEmailVerified && (
-                          <button
-                            type="button"
-                            onClick={handleVerifyEmail}
-                            className="px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                          >
-                            Verify Email
-                          </button>
-                        )}
                       </div>
                       {errors.email && (
                         <p className="mt-1 text-sm text-red-600">
                           {errors.email.message}
                         </p>
                       )}
+                      <div className="mt-2 flex  justify-end">
+                        {!isOtpSent && !isEmailVerified && (
+                          <button
+                            type="button"
+                            onClick={handleVerifyEmail}
+                            className="px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                          >
+                            {verifying ? "Sending OTP..." : "Verify Email"}
+                          </button>
+                        )}
+                      </div>
                     </div>
 
                     {isOtpSent && !isEmailVerified && (
                       <div className="mt-4">
-                        <label htmlFor="otp" className="block text-sm font-medium text-gray-700">
+                        <label
+                          htmlFor="otp"
+                          className="block text-sm font-medium text-gray-700"
+                        >
                           Enter OTP
                         </label>
                         <div className="mt-1 flex gap-2">
@@ -412,15 +396,17 @@ console.log("isOtpSent", isOtpSent ,isEmailVerified);
                             className="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             placeholder="Enter OTP sent to your email"
                           />
+                        </div>
+                        <div className="mt-2 flex justify-end">
+                          {" "}
                           <button
                             type="button"
                             onClick={handleVerifyOtp}
                             className="px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                           >
-                            Verify OTP
+                            {otpverify ? "Verifying..." : "Verify OTP"}
                           </button>
                         </div>
-                       
                       </div>
                     )}
 
@@ -428,8 +414,16 @@ console.log("isOtpSent", isOtpSent ,isEmailVerified);
                       <div className="mt-4 rounded-md bg-green-50 p-4">
                         <div className="flex">
                           <div className="flex-shrink-0">
-                            <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            <svg
+                              className="h-5 w-5 text-green-400"
+                              viewBox="0 0 20 20"
+                              fill="currentColor"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                clipRule="evenodd"
+                              />
                             </svg>
                           </div>
                           <div className="ml-3">
@@ -547,8 +541,7 @@ console.log("isOtpSent", isOtpSent ,isEmailVerified);
                               </li>
                             ))}
                           </ul>
-                          <button
-                            type="button"
+                          <div
                             className={`mt-8 w-full py-3 px-4 rounded-lg text-sm font-medium transition-colors ${
                               selectedPlan === plan._id
                                 ? "bg-blue-600 text-white hover:bg-blue-700"
@@ -558,7 +551,7 @@ console.log("isOtpSent", isOtpSent ,isEmailVerified);
                             {selectedPlan === plan._id
                               ? "Selected"
                               : "Select Plan"}
-                          </button>
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -567,32 +560,6 @@ console.log("isOtpSent", isOtpSent ,isEmailVerified);
               </div>
             )}
 
-            {/* Step 4: Payment Information */}
-            {currentStep === 3 && (
-              <div className="space-y-6">
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                    {selectedPlan === "free"
-                      ? "Complete Registration"
-                      : "Payment Details"}
-                  </h2>
-
-                  {selectedPlan !== "free" && clientSecret && (
-                    <Elements
-                      stripe={stripePromise}
-                      options={{
-                        clientSecret,
-                        appearance: { theme: "stripe" },
-                      }}
-                    >
-                      <PaymentForm />
-                    </Elements>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Navigation Buttons */}
             <div className="flex justify-between mt-8">
               {currentStep > 0 && (
                 <button
@@ -603,7 +570,8 @@ console.log("isOtpSent", isOtpSent ,isEmailVerified);
                   Previous
                 </button>
               )}
-              {currentStep < steps.length - 1 ? (
+              {currentStep < steps.length - 1 &&
+              (currentStep !== 1 || isEmailVerified) ? (
                 <button
                   type="button"
                   onClick={nextStep}
@@ -612,57 +580,21 @@ console.log("isOtpSent", isOtpSent ,isEmailVerified);
                   Next
                 </button>
               ) : (
-                <button
-                  type="submit"
-                  className="ml-auto inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                >
-                  Complete Sign Up
-                </button>
+                currentStep === 2 && (
+                  <button
+                    onClick={onSubmit}
+                    className="ml-auto inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  >
+                    {saving
+                      ? "Please wait... Redirecting you..."
+                      : "Complete Signup"}
+                  </button>
+                )
               )}
             </div>
           </form>
         </div>
       </div>
     </div>
-  );
-}
-
-function PaymentForm() {
-  const stripe = useStripe();
-  const elements = useElements();
-  const [error, setError] = useState(null);
-  const [processing, setProcessing] = useState(false);
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    if (!stripe || !elements) return;
-
-    setProcessing(true);
-
-    const { error } = await stripe.confirmPayment({
-      elements,
-      confirmParams: {
-        return_url: `${window.location.origin}/dashboard`,
-      },
-    });
-
-    if (error) {
-      setError(error.message);
-      setProcessing(false);
-    }
-  };
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <PaymentElement />
-      {error && <div className="text-red-600 mt-2 text-sm">{error}</div>}
-      <button
-        type="submit"
-        disabled={!stripe || processing}
-        className="mt-4 w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
-      >
-        {processing ? "Processing..." : "Pay now"}
-      </button>
-    </form>
   );
 }

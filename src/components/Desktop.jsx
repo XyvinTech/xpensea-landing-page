@@ -99,7 +99,7 @@ const Desktop = () => {
         </div>
 
         <div className="mt-12 flex justify-center">
-          <div className="rounded-lg shadow-lg bg-white p-4 w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 flex items-center justify-center">
+          <div className="rounded-lg shadow-lg bg-white p-4 flex items-center justify-center">
             <img
               src={selectedFeature.image}
               alt={selectedFeature.title}

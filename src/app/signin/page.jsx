@@ -12,7 +12,6 @@ export default function SignInPage() {
   } = useForm();
 
   const onSubmit = (data) => {
-    console.log(data);
     // Handle sign in logic here
   };
 
