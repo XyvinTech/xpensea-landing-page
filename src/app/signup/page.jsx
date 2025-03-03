@@ -86,6 +86,7 @@ export default function SignupPage() {
     try {
       const formData = {
         name: data.name,
+        phone: data.phone,
         ownerEmail: data.email,
         address: data.address,
         industry: data.industry,
@@ -233,7 +234,27 @@ export default function SignupPage() {
                         </p>
                       )}
                     </div>
-
+                    <div>
+                      <label
+                        htmlFor="phone"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Company Phone
+                      </label>
+                      <input
+                        {...register("phone", {
+                          required: "Company phone is required",
+                        })}
+                        type="text"
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Enter company phone"
+                      />
+                      {errors.phone && (
+                        <p className="mt-1 text-sm text-red-600">
+                          {errors.phone.message}
+                        </p>
+                      )}
+                    </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label
