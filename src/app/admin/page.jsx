@@ -18,7 +18,7 @@ export default function AdminDashboard() {
               name: "Total Companies",
               value: data.data.companies.total,
               trend: "up",
-              change: "+0", // Change can be dynamically set if available
+              change: "+0", 
             },
             {
               name: "Active Companies",

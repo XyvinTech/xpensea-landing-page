@@ -2,13 +2,22 @@
 
 import { useEffect, useState } from "react";
 import AdminNavbar from "../../../components/AdminNavbar";
-import { getPayments, getPlan, getPlanById } from "@/app/api/adminApi";
+import { getDashboard, getPayments, getPlan, getPlanById } from "@/app/api/adminApi";
 
 export default function SubscriptionsManagement() {
   const [timeRange, setTimeRange] = useState("month");
   const [plans, setPlans] = useState([]);
   const [editOpen, setEditOpen] = useState(false);
   const [payments, setPayments] = useState([]);
+
+
+
+
+
+
+
+
+
 
   useEffect(() => {
     const fetchPayments = async () => {
@@ -22,32 +31,39 @@ export default function SubscriptionsManagement() {
     fetchPayments();
   }, []);
 
-  const metrics = [
-    {
-      name: "Monthly Revenue",
-      value: "$45,678",
-      change: "+12.5%",
-      trend: "up",
-    },
-    {
-      name: "Active Subscriptions",
-      value: "1,280",
-      change: "+18.2%",
-      trend: "up",
-    },
-    {
-      name: "Churn Rate",
-      value: "2.3%",
-      change: "-0.5%",
-      trend: "down",
-    },
-    {
-      name: "Avg. Revenue/User",
-      value: "$35.50",
-      change: "+5.3%",
-      trend: "up",
-    },
-  ];
+  const [stats, setStats] = useState([]);
+  
+
+  useEffect(() => {
+    getDashboard()
+      .then((data) => {
+        if (data.status === 200) {
+          const metrics = [
+            {
+              name: "Active Subscriptions",
+              value: data.data.companies.total,
+              trend: "up",
+              change: "+0", 
+            },
+            {
+              name: "Monthly Revenue",
+              value: `$${data.data.monthleyRevenue}`,
+              trend: data.data.monthleyRevenue >= 0 ? "up" : "down",
+              change: `+${data.data.monthleyRevenue}`,
+            },
+          ];
+          setStats(metrics);
+        }
+      })
+      .catch((error) => console.error("Error fetching dashboard stats:", error));
+  }, []);
+
+
+
+
+
+ 
+
 
   const transactions = [
     {
@@ -134,63 +150,47 @@ export default function SubscriptionsManagement() {
 
           {/* Metrics Grid */}
           <div className="mt-4 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {metrics.map((metric) => (
-              <div
-                key={metric.name}
-                className="bg-white overflow-hidden shadow rounded-lg"
+          {stats.map((metric) => (
+        <div
+          key={metric.name}
+          className="bg-white shadow rounded-lg overflow-hidden p-5"
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <dt className="text-sm font-medium text-gray-500 truncate">
+                {metric.name}
+              </dt>
+              <dd className="mt-1 text-2xl font-semibold text-gray-900">
+                {metric.value}
+              </dd>
+            </div>
+            <div
+              className={`flex items-center text-sm font-semibold ${
+                metric.trend === "up" ? "text-green-600" : "text-red-600"
+              }`}
+            >
+              {metric.change}
+              <svg
+                className="ml-1 h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
               >
-                <div className="p-5">
-                  <div className="flex items-center">
-                    <div className="flex-1">
-                      <dt className="text-sm font-medium text-gray-500 truncate">
-                        {metric.name}
-                      </dt>
-                      <dd className="mt-1 text-2xl font-semibold text-gray-900">
-                        {metric.value}
-                      </dd>
-                    </div>
-                    <div
-                      className={`ml-3 flex items-center text-sm font-semibold ${
-                        metric.trend === "up"
-                          ? "text-green-600"
-                          : "text-red-600"
-                      }`}
-                    >
-                      {metric.change}
-                      {metric.trend === "up" ? (
-                        <svg
-                          className="ml-1 h-4 w-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-                          />
-                        </svg>
-                      ) : (
-                        <svg
-                          className="ml-1 h-4 w-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6"
-                          />
-                        </svg>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d={
+                    metric.trend === "up"
+                      ? "M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                      : "M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6"
+                  }
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+      ))}
           </div>
 
           <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-3">
