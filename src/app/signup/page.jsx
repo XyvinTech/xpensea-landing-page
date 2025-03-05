@@ -160,7 +160,8 @@ export default function SignupPage() {
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md mb-8">
         <Link href="/" className="flex justify-center items-center mb-6">
-          <div className="w-10 h-10 bg-blue-600 rounded-xl"></div>
+        <img src="/xpen.svg" alt="Logo" className="w-8 h-8" />
+
           <span className="ml-2 text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
             Xpensea
           </span>
