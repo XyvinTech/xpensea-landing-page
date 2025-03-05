@@ -7,18 +7,17 @@ export default function Hero() {
         <div className="text-center">
           <h1 className="max-w-4xl mx-auto">
             <span className="block text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl mb-4">
-              Expense Management
+              Unlock Efficiency with
             </span>
             <span className="block text-4xl font-bold tracking-tight text-blue-600 sm:text-6xl">
-              made simple
+              Intelligent Expense
             </span>
             <span className="block text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-              for businesses.
+              Management
             </span>
           </h1>
           <p className="mt-6 text-lg leading-8 text-gray-600 max-w-2xl mx-auto">
-            Most expense tracking software is accurate, but hard to use. We make
-            the opposite trade-off, and hope you don't get audited.
+          AI-Driven Solutions for Seamless Expense Tracking and Budget Optimization
           </p>
           <div className="mt-10 flex items-center justify-center gap-x-6">
             <Link
@@ -27,7 +26,7 @@ export default function Hero() {
             >
               Get 1 months free
             </Link>
-            <Link
+            {/* <Link
               href="#demo"
               className="flex items-center text-lg font-semibold leading-6 text-gray-900 hover:text-blue-600 transition-all duration-300"
             >
@@ -43,10 +42,10 @@ export default function Hero() {
                   clipRule="evenodd"
                 />
               </svg>
-            </Link>
+            </Link> */}
           </div>
         </div>
-{/* 
+        {/* 
         <div className="mt-20">
           <h2 className="text-center text-gray-500 text-sm font-semibold mb-8">
             Trusted by these six companies so far
